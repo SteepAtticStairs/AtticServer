@@ -21,9 +21,14 @@ function downloadFile(url, fileName, cb) {
     });
 }
 
-const satNum = '16'; // 16, 17, or 18
-const channel = '13'; // 01 - 16
-const sector = 'conus'
+var args = process.argv;
+
+//const satNum = '16'; // 16, 17, or 18
+//const channel = '13'; // 01 - 16
+//const sector = 'conus'
+const satNum = args[2]; // 16, 17, or 18
+const channel = args[3]; // 01 - 16
+const sector = args[4];
 /*
 alaska (no goes 16)
 conus
