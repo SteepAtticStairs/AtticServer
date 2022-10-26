@@ -1,1 +1,1 @@
-This is server code for my website.
+This is the server code for my website.
