@@ -2,6 +2,7 @@ const https = require('https');
 const fs = require('fs');
 const { exec } = require("child_process");
 const path = require("path");
+const AWS = require('aws-sdk')
 
 function runCommand(cmd, cb) {
     exec(cmd, (error, stdout, stderr) => {
@@ -52,17 +53,10 @@ var supportedChannels = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '
 
 
 function removeNetCdfFiles() {
-    fs.readdir('data', (err, files) => {
-        if (err) throw err;
-
-        for (const file of files) {
-            fs.unlink(path.join('data', file), (err) => {
-                if (err) throw err;
-            });
-        }
-    });
+    fs.rmSync('data', { recursive: true, force: true });
 }
 removeNetCdfFiles();
+fs.mkdirSync('./data');
 
 var now = new Date();
 var utc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
@@ -103,9 +97,15 @@ console.log('Finding file...');
 // hurricane ian
 // day of year = 271
 // hour = 18
-var findLatestFileCmd = `aws s3 ls --no-sign-request s3://noaa-goes${satNum}/${directory}/${currentYear}/${dayOfYear}/${currentHour}/OR_${productName} --recursive | sort | tail -n 1 | awk '{print $4}'`;
-runCommand(findLatestFileCmd, function(output) {
+var s3 = new AWS.S3();
+var params = {
+    Bucket: `noaa-goes${satNum}`,
+    Delimiter: '/',
+    Prefix: `${directory}/${currentYear}/${dayOfYear}/${currentHour}/OR_${productName}`
+}
+s3.makeUnauthenticatedRequest('listObjects', params, function(err, data) {
     console.log('Downloading file...');
+    var output = data.Contents[data.Contents.length - 1].Key;
     var filepath = output.trim();
     var filename = output.split('/');
     filename = filename[filename.length - 1];
