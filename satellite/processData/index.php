@@ -12,21 +12,27 @@ $channel = $data['channel'];
 $sector = $data['sector'];
 
 
-$output = shell_exec("node index.js " . $satNum . " " . $channel . " " . $sector);
+$output = shell_exec("node goesDL.js " . $satNum . " " . $channel . " " . $sector);
 
-$path = 'projectedImage.png';
+$outputFileName = 'G' . $satNum . '_' . $channel . '_' . $sector;
+
+$path = $outputFileName . '-proj.png';
+
 $type = pathinfo($path, PATHINFO_EXTENSION);
 $img = file_get_contents($path);
 $base64 = base64_encode($img);
 
-$auxXML = file_get_contents('projectedImage.png.aux.xml');
+$auxXML = file_get_contents($outputFileName . '-proj.png.aux.xml');
 
 print_r($auxXML . 'STEEPATTICSTAIRS' . $base64);
 
-unlink('initialImage.json');
-unlink('initialImage.png');
-unlink('initialImage.wld');
-unlink('projectedImage.png');
-unlink('projectedImage.png.aux.xml');
+// unlink($outputFileName);
+// unlink($path);
+// unlink($outputFileName . '-proj.png.aux.xml');
+// unlink('initialImage.json');
+// unlink('initialImage.png');
+// unlink('initialImage.wld');
+// unlink('projectedImage.png');
+// unlink('projectedImage.png.aux.xml');
 
 ?>

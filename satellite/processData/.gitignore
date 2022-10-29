@@ -3,3 +3,5 @@
 *.wld
 *.png.aux.xml
 *.tif
+__pycache__
+*.nc
