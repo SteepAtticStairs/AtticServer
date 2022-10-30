@@ -3,6 +3,7 @@ const fs = require('fs');
 const { exec } = require("child_process");
 const path = require("path");
 const AWS = require('aws-sdk')
+const shell = require('shelljs')
 
 function runCommand(cmd, cb) {
     exec(cmd, (error, stdout, stderr) => {
@@ -19,6 +20,10 @@ function runCommand(cmd, cb) {
         //console.log(`stdout: ${stdout}`);
         cb(stdout);
     });
+}
+function runCommandBetter(cmd) {
+    shell.config.silent = true;
+    return shell.exec(cmd, {async: false}).stdout;
 }
 function removeFile(fileName) {
     if (fs.existsSync(fileName)) {
@@ -135,42 +140,39 @@ s3.makeUnauthenticatedRequest('listObjects', params, function(err, data) {
             if (channel == 'truecolor' || channel == 'veggie') {
                 variableName += '_C13';
             }
-            var generateWldFileCmd = `gdal_translate -co "WORLDFILE=YES" NETCDF:"data/${filename.trim()}":${variableName} ${outputFileName}`
-            //console.log(generateWldFileCmd)
-            runCommand(generateWldFileCmd, function(output) {
-                removeFile(outputFileName);
-                var getProj4StrCmd = `gdalsrsinfo -o proj4 NETCDF:"data/${filename.trim()}":${variableName}`
-                runCommand(getProj4StrCmd, function(output) {
-                    var wldFileData = fs.readFileSync(`${outputFileName}.wld`, { 'encoding': 'utf-8' });
-                    // for some reason the wld file generated for a full disk scan is incorrect
-                    if (sector == 'fulldisk') {
-                        wldFileData = wldFileData.split('\n')
-                        wldFileData[0] = parseFloat(wldFileData[0]) * 3;
-                        wldFileData[3] = parseFloat(wldFileData[3]) * 3;
-                        wldFileData = wldFileData.join('\n');
-                        fs.writeFileSync(`${outputFileName}.wld`, wldFileData, { 'encoding': 'utf-8' });
-                    }
-                    var proj4str = output.trim();
-                    //console.log(wldFileData, proj4str)
+            removeFile(outputFileName);
+            // `gdalsrsinfo -o proj4 NETCDF:"data/${filename.trim()}":${variableName}`
+            var getProj4StrCmd = `python3 getExtraData.py data/${filename.trim()} proj4str ${satNum} ${sector}`
+            var proj4str = runCommandBetter(getProj4StrCmd);
+            proj4str = proj4str.trim();
+            //console.log(proj4str)
+            var wldFileData = fs.readFileSync(`wldFiles/G${satNum}_${sector}.wld`, { 'encoding': 'utf-8' });
+            fs.writeFileSync(`${outputFileName}.wld`, wldFileData, { 'encoding': 'utf-8' });
+            // // for some reason the wld file generated for a full disk scan is incorrect
+            // if (sector == 'fulldisk') {
+            //     wldFileData = wldFileData.split('\n')
+            //     wldFileData[0] = parseFloat(wldFileData[0]) * 3;
+            //     wldFileData[3] = parseFloat(wldFileData[3]) * 3;
+            //     wldFileData = wldFileData.join('\n');
+            //     fs.writeFileSync(`${outputFileName}.wld`, wldFileData, { 'encoding': 'utf-8' });
+            // }
 
-                    var gdalwarpCommand = `
-                            gdalwarp \
-                            -s_srs "${proj4str}" \
-                            -t_srs EPSG:3857 ${outputFileName}.png \
-                            -srcnodata 0 -dstnodata 0 \
-                            ${outputFileName}-proj.png
-                        `;
-                    console.log('Reprojecting image...');
-                    //console.log(gdalwarpCommand)
-                    runCommand(gdalwarpCommand, function(output) {
-                        removeFile(`${outputFileName}.wld`);
-                        // removeFile(`${outputFileName}.png`);
-                        // removeFile(`${outputFileName}-proj.png`);
-                        // removeFile(`${outputFileName}-proj.png.aux.xml`);
-                        removeNetCdfFiles();
-                        console.log('Finished.');
-                    })
-                })
+            var gdalwarpCommand = `
+                    gdalwarp \
+                    -s_srs "${proj4str}" \
+                    -t_srs EPSG:3857 ${outputFileName}.png \
+                    -srcnodata 0 -dstnodata 0 \
+                    ${outputFileName}-proj.png
+                `;
+            console.log('Reprojecting image...');
+            //console.log(gdalwarpCommand)
+            runCommand(gdalwarpCommand, function(output) {
+                //removeFile(`${outputFileName}.wld`);
+                // removeFile(`${outputFileName}.png`);
+                // removeFile(`${outputFileName}-proj.png`);
+                // removeFile(`${outputFileName}-proj.png.aux.xml`);
+                //removeNetCdfFiles();
+                console.log('Finished.');
             })
         })
     })

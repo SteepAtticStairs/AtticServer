@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "aws-sdk": "^2.1243.0"
+    "aws-sdk": "^2.1243.0",
+    "shelljs": "^0.8.5"
   }
 }
