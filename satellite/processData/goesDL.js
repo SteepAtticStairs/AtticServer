@@ -87,12 +87,20 @@ if (supportedChannels.includes(channel)) {
     directory = 'ABI-L2-CMIP';
     if (sector == 'conus') { directory += 'C'; }
     else if (sector == 'fulldisk') { directory += 'F'; }
-    productName = `${directory}-M6C${channel}_G${satNum}`
+    else if (sector == 'mesoscale-1' || sector == 'mesoscale-2') { directory += 'M'; }
+    productName = `${directory}`
+    if (sector == 'mesoscale-1') { productName += '1' }
+    else if (sector == 'mesoscale-1') { productName += '2' }
+    productName += `-M6C${channel}_G${satNum}`
 } else {
     directory = 'ABI-L2-MCMIP';
     if (sector == 'conus') { directory += 'C'; }
     else if (sector == 'fulldisk') { directory += 'F'; }
-    productName = `${directory}-M6_G${satNum}`
+    else if (sector == 'mesoscale-1' || sector == 'mesoscale-2') { directory += 'M'; }
+    productName = `${directory}`
+    if (sector == 'mesoscale-1') { productName += '1' }
+    else if (sector == 'mesoscale-1') { productName += '2' }
+    productName += `-M6_G${satNum}`
 }
 
 // https://noaa-goes16.s3.amazonaws.com/ABI-L2-CMIPC/2022/301/17/OR_ABI-L2-CMIPC-M6C01_G16_s20223011706175_e20223011708548_c20223011709029.nc

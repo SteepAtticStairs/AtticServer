@@ -1,0 +1,3 @@
+[submodule "satellite/processData/ProcessedData"]
+	path = satellite/processData/ProcessedData
+	url = https://github.com/SteepAtticStairs/ProcessedData.git
