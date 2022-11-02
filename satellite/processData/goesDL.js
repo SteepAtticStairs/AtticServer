@@ -40,6 +40,12 @@ var args = process.argv;
 const satNum = args[2]; // 16, 17, or 18
 const channel = args[3]; // 01 - 16
 const sector = args[4];
+var outputFileName = '';
+if (args[5] !== undefined) {
+    outputFileName = args[5]
+} else {
+    outputFileName = `G${satNum}_${channel}_${sector}`
+}
 
 var supportedChannels = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16']
 // function notSupportedError() {
@@ -126,8 +132,6 @@ s3.makeUnauthenticatedRequest('listObjects', params, function(err, data) {
     var url = `https://noaa-goes${satNum}.s3.amazonaws.com/${filepath}`
     //console.log(url)
     downloadFile(url, function() {
-        var outputFileName = `G${satNum}_${channel}_${sector}`
-
         console.log('Plotting image...')
         var pythonCmd = `python3 index.py ${channel} ${sector} data/${filename.trim()} ${outputFileName}.png`;
         //console.log(pythonCmd)
@@ -175,7 +179,7 @@ s3.makeUnauthenticatedRequest('listObjects', params, function(err, data) {
             console.log('Reprojecting image...');
             //console.log(gdalwarpCommand)
             runCommand(gdalwarpCommand, function(output) {
-                //removeFile(`${outputFileName}.wld`);
+                removeFile(`${outputFileName}.wld`);
                 // removeFile(`${outputFileName}.png`);
                 // removeFile(`${outputFileName}-proj.png`);
                 // removeFile(`${outputFileName}-proj.png.aux.xml`);
