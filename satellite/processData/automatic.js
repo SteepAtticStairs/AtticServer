@@ -2,7 +2,7 @@ const shell = require('shelljs');
 const fs = require('fs');
 const GitHub = require('github-api');
 
-var token = ENV['GITHUB_KEY']
+var token = process.env.GITHUB_KEY
 // basic auth
 var gh = new GitHub({
     token: token
