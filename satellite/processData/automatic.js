@@ -108,7 +108,7 @@ function checkDirLength(dir, cb) {
     })
 }
 
-function storeFiles(satNum, channel, sector) {
+function storeFiles(satNum, channel, sector, cb) {
     var fileNameBase = `${new Date().getTime()}`
     var image = `${fileNameBase}.png`
     var projImage = `${fileNameBase}-proj.png`
@@ -136,10 +136,12 @@ function storeFiles(satNum, channel, sector) {
     checkDirLength(`${satNum}/${sector}/${channel}`, (err) => {
         writeFile(projImage, `${satNum}/${sector}/${channel}/${projImage}`, commitMsg, () => {
         writeFile(auxXML, `${satNum}/${sector}/${channel}/${auxXML}`, commitMsg, () => {
-
+            cb();
         })})
     })
 }
 
-storeFiles('16', '08', 'conus');
-storeFiles('16', '13', 'conus');
+storeFiles('16', '08', 'conus', () => {
+storeFiles('16', '13', 'conus', () => {
+
+})})
