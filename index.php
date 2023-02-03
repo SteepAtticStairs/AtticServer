@@ -14,9 +14,9 @@ header("Pragma: no-cache");
 $milliseconds = floor(microtime(true) * 1000);
 //$page = file_get_contents('https://steepatticstairs.github.io/AtticRadar/index.html'); // ./index.html
 //echo $page;
-$file = file_get_contents('https://steepatticstairs.github.io/AtticRadar/index.html');
+$file = file_get_contents('https://steepatticstairs.net/AtticRadar/index.html');
 $headstart = strpos($file, "<head>") + 6;
-$newtag = "<base href='https://steepatticstairs.github.io/AtticRadar/'>";
+$newtag = "<base href='https://steepatticstairs.net/AtticRadar/'>";
 $file = substr_replace($file, $newtag, $headstart, 0);
 echo $file;
 
