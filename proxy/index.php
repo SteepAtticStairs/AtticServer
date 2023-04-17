@@ -10,7 +10,9 @@ $userURL = parse_url($currentURL, PHP_URL_QUERY);
 
 $headers = get_headers($userURL);
 foreach ($headers as $header) {
-    header($header);
+    if (strpos($header, 'Last-Modified:') === 0) {
+        header($header);
+    }
 }
 
 $page = file_get_contents($userURL);
