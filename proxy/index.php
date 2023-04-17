@@ -8,6 +8,11 @@ header("Access-Control-Allow-Headers: X-Requested-With");
 $currentURL = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 $userURL = parse_url($currentURL, PHP_URL_QUERY);
 
+$headers = get_headers($userURL);
+foreach ($headers as $header) {
+    header($header);
+}
+
 $page = file_get_contents($userURL);
 echo $page;
 
