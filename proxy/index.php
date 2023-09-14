@@ -11,7 +11,7 @@ $arrContextOptions=array(
 // https://stackoverflow.com/a/25661403/18758797
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST');
-header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization, User-Agent");
+header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization, User-Agent, Cache-Control");
 
 $currentURL = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 $userURL = parse_url($currentURL, PHP_URL_QUERY);
