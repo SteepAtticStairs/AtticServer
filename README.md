@@ -5,6 +5,7 @@ https://www.sammeechward.com/deploying-full-stack-js-to-aws-ec2
 
 ```
 (ssh ...)
+tail -f logs/foo.err (show logs)
 cd server
 nohup php -S localhost:3000 > ../logs/foo.log 2> ../logs/foo.err < /dev/null &
 ps -ef (to find the nohup process)
