@@ -9,3 +9,5 @@ cd server
 nohup php -S localhost:3000 > ../logs/foo.log 2> ../logs/foo.err < /dev/null &
 ps -ef (to find the nohup process)
 ```
+https://stackoverflow.com/a/29172 <br>
+https://stackoverflow.com/a/25082918
